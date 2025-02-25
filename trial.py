@@ -2,21 +2,13 @@ import streamlit as st
 import yfinance as yf
 import plotly.graph_objects as go
 import pandas as pd
-import os
-from dotenv import load_dotenv
 
-# Load credentials from .env
-load_dotenv()
-USER_CREDENTIALS = {
-    os.getenv("ADMIN_USER"): os.getenv("ADMIN_PASS"),
-    os.getenv("USER1"): os.getenv("USER1_PASS"),
-}
+# 🔹 Load credentials securely from Streamlit Secrets
+USER_CREDENTIALS = st.secrets["credentials"]
 
-# Session state for login
 if "logged_in" not in st.session_state:
     st.session_state.logged_in = False
 
-# Login form
 if not st.session_state.logged_in:
     st.title("🔒 Secure Stock Dashboard")
     username = st.text_input("Username")
@@ -29,9 +21,7 @@ if not st.session_state.logged_in:
             st.experimental_rerun()
         else:
             st.error("❌ Invalid username or password")
-
 else:
-    # Stock Dashboard
     st.title("📊 Stock Price Dashboard")
     ticker = st.sidebar.text_input("Enter Stock Ticker (e.g., AAPL, TSLA)", "AAPL")
     start_date = st.sidebar.date_input("Start Date", pd.to_datetime("2023-01-01"))
@@ -51,7 +41,6 @@ else:
     except Exception as e:
         st.error(f"Error fetching data: {e}")
 
-    # Logout button
     if st.button("Logout"):
         st.session_state.logged_in = False
         st.experimental_rerun()
